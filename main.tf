@@ -5,7 +5,7 @@ module "session" {
 
 resource "argocd_application" "bitnami_sealedsecrets_controller" {
   metadata {
-    name      = "bitnami-sealedsecrets-controller"
+    name      = local.sealedsecrets_controller_name
   }
 
   cascade = true

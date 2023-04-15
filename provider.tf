@@ -1,17 +1,13 @@
 terraform {
   required_providers {
-    restapi = {
-      source  = "Mastercard/restapi"
-      version = "1.18.0"
+    argocd = {
+      source = "oboukili/argocd"
+      version = "5.1.0"
     }
   }
 }
 
-provider "restapi" {
-  uri = var.argo_cd.host
-  write_returns_object = true
-  headers = {
-    Content-Type = "application/json"
-  }
-  create_method = "POST"
+provider "argocd" {
+  server_addr = var.argo_cd.host_and_port
+  auth_token  = module.session.token
 }

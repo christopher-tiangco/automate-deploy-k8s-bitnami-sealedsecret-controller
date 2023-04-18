@@ -1,10 +1,10 @@
 variable "argo_cd" {
   description = "ArgoCD admin account"
   type = object({
-    host     = string
+    host          = string
     host_and_port = string
-    username = string
-    password = string
+    username      = string
+    password      = string
   })
 }
 

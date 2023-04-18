@@ -1,18 +1,21 @@
-#@TODO:
-# - Use the curl provider to retrieve ArgoCD token then store to local
+module "session" {
+  source  = "./modules/session"
+  argo_cd = var.argo_cd
+}
 
-data "curl_request" "argocd_token" {
-  uri = "${var.argo_cd.host}/api/v1/session"
+module "argocd_app_sync" {
+  source = "./modules/request"
+  argo_cd = {
+    host = var.argo_cd.host
+    path = "/api/v1/applications/${argocd_application.bitnami_sealedsecrets_controller.metadata[0].name}/sync"
+  }
+  token       = local.argocd_token
   http_method = "POST"
-  data = jsonencode({
-    "username": var.argo_cd.username
-    "password": var.argo_cd.password
-  })
 }
 
 resource "argocd_application" "bitnami_sealedsecrets_controller" {
   metadata {
-    name      = local.sealedsecrets_controller_name
+    name = local.sealedsecrets_controller_name
   }
 
   cascade = true
@@ -31,3 +34,4 @@ resource "argocd_application" "bitnami_sealedsecrets_controller" {
     }
   }
 }
+

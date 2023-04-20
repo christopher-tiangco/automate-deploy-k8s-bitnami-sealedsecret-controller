@@ -2,7 +2,7 @@
 
 Terraform configuration for deploying Bitnami SealedSecrets controller into Kubernetes cluster via ArgoCD.
 
-Manually installing Bitnami SealedSecrets controller using ArgoCD is really straightforward. However, the goal of putting it as a Terraform configuration is to automate its installation using GitOps methodology (via ArgoCD)
+Manually installing Bitnami SealedSecrets controller using ArgoCD is really straightforward. However, the goal of putting it as a Terraform configuration is to automate its installation.
 
 The Terraform configuration interacts with ArgoCD's REST API to create and deploy the Sealedsecrets controller as an ArgoCD application
 
@@ -19,8 +19,15 @@ For more info about Bitnami SealedSecrets controller, see https://github.com/bit
 ```
 argo_cd = {
   host      = "Argo CD URL (e.g https://argocd.example.com)"
+  host_and_port = "same as above excluding the URL scheme and including port 443 (e.g. argocd.example.com:443)"
   user      = "Argo CD admin username"
   password  = "Argo CD admin password"
+}
+bitnami_sealedsecrets_controller = {
+  git_source = {
+    repo_url  = "git repository where the bitnami sealedsecrets controller manifest is located"
+    repo_path = "the path in the git repo above where the manifest reside"
+  }
 }
 ```
 

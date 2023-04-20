@@ -5,10 +5,6 @@ variable "argo_cd" {
   })
 }
 
-variable "token" {
-  type = string
-}
-
 variable "http_method" {
   type = string  
 }

@@ -3,35 +3,26 @@ module "session" {
   argo_cd = var.argo_cd
 }
 
+module "bitnami_sealedsecrets_controller" {
+  source                           = "./modules/argocd_app/bitnami_sealedsecrets_controller"
+  argo_cd                          = var.argo_cd
+  argo_cd_auth_token               = module.session.token
+  bitnami_sealedsecrets_controller = var.bitnami_sealedsecrets_controller
+}
+
 module "argocd_app_sync" {
   source = "./modules/request"
+  providers = {
+    curl = curl.with_bearer_token
+  }
   argo_cd = {
     host = var.argo_cd.host
-    path = "/api/v1/applications/${argocd_application.bitnami_sealedsecrets_controller.metadata[0].name}/sync"
+
+    # Using `module.bitnami_sealedsecrets_controller.data.id` makes this module run after the `bitnami_sealedsecrets_controller` module (implied dependency)
+    path = "/api/v1/applications/${trimsuffix(module.bitnami_sealedsecrets_controller.data.id, ":")}/sync"
   }
-  token       = local.argocd_token
   http_method = "POST"
 }
 
-resource "argocd_application" "bitnami_sealedsecrets_controller" {
-  metadata {
-    name = local.sealedsecrets_controller_name
-  }
 
-  cascade = true
-  wait    = false
-
-  spec {
-    destination {
-      server    = "https://kubernetes.default.svc"
-      namespace = "default"
-    }
-
-    source {
-      repo_url        = var.bitnami_sealedsecrets_controller.git_source.repo_url
-      path            = var.bitnami_sealedsecrets_controller.git_source.repo_path
-      target_revision = "master"
-    }
-  }
-}
 

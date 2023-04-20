@@ -6,7 +6,3 @@ terraform {
     }
   }
 }
-
-provider "curl" {
-  token = var.token
-}
